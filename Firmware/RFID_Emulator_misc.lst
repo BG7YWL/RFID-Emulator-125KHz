@@ -1,0 +1,760 @@
+MPASM  5.40            RFID_EMULATOR_MISC.ASM   5-1-2012  1:23:27         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00002  ;;                                                                          ;;
+                      00003 ;;                                                                            ;;
+                      00004 ;                   RFID Emulator - TOOL LIBRARY                               ;
+                      00005 ;;                                                                            ;;
+                      00006  ;;                                                                          ;;
+                      00007   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00008 
+                      00009 
+                      00010 
+                      00011         #include "p12f683.inc"
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ;  MPASM PIC12F683 processor include
+                      00005 ; 
+                      00006 ;  (c) Copyright 1999-2011 Microchip Technology, All rights reserved
+                      00007 ;==========================================================================
+                      00008 
+                      00443         LIST
+                      00012         #include "RFID_Emulator_misc.inc"
+                      00001   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00002  ;;                                                                          ;;
+                      00003 ;;                                                                            ;;
+                      00004 ;                   RFID Emulator - TOOL LIBRARY                               ;
+                      00005 ;;                                                                            ;;
+                      00006  ;;                                                                          ;;
+                      00007   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00008 
+                      00009 
+                      00010 
+                      00011         #include "p12f683.inc"
+                      00444         LIST
+                      00445 
+                      00446 ;==========================================================================
+                      00447 ;  MPASM PIC12F683 processor include
+                      00448 ; 
+                      00449 ;  (c) Copyright 1999-2011 Microchip Technology, All rights reserved
+                      00450 ;==========================================================================
+                      00451 
+Message[310]: Superseding current maximum RAM and RAM map.
+                      00886         LIST
+                      00012 
+                      00013         #IFNDEF MISC_INC
+                      00014         
+                      00015         #DEFINE MISC_INC
+                      00016 
+                      00017 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00018 ;;;                                                                          ;;;
+                      00019 ;;                                                                 DEFINITIONS                          
+                                  ;;
+                      00020 ;;;                                                                          ;;;
+                      00021 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MPASM  5.40            RFID_EMULATOR_MISC.ASM   5-1-2012  1:23:27         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00022 
+                      00023 
+                      00024 
+                      00025 
+                      00026 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00027 ;;;                                                                          ;;;
+                      00028 ;;                                                                  MACROS                              
+                                  ;;
+                      00029 ;;;                                                                          ;;;
+                      00030 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00031 
+                      00032 
+                      00033 
+                      00034 
+                      00035 
+                      00036         ENDIF
+                      00013 
+                      00014 
+  0000                00015         GLOBAL  _writeEEPROM, _readEEPROM , _pauseX10uS, _pauseX1mS
+  0000                00016         GLOBAL  _nibbleHex2ASCII, _ASCII2nibbleHex, _ASCII2byteHex
+  0000                00017         GLOBAL  PARAM1
+                      00018 
+                      00019 
+                      00020 
+                      00021 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00022 ;;;                                                                          ;;;
+                      00023 ;;                                VARIABLES                                   ;;
+                      00024 ;;;                                                                          ;;;
+                      00025 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00026 
+                      00027         UDATA
+                      00028 
+0000                  00029 TMP             RES 1
+0001                  00030 TMP2    RES 1
+                      00031 
+                      00032         UDATA_SHR
+                      00033 
+0000                  00034 PARAM1  RES     1
+                      00035         
+                      00036         
+                      00037 
+                      00038 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00039 ;;;                                                                          ;;;
+                      00040 ;;                                  CODE                                      ;;
+                      00041 ;;;                                                                          ;;;
+                      00042 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00043 
+                      00044         CODE
+                      00045 
+                      00046 
+                      00047 
+                      00048 
+                      00049 
+MPASM  5.40            RFID_EMULATOR_MISC.ASM   5-1-2012  1:23:27         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00050 
+                      00051 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00052 ;;;                                                                          ;;;
+                      00053 ;;                                                                            ;;
+                      00054 ;    Function:  _nibbleHex2ASCII                                              ;
+                      00055 ;    Desc.:     Transform an hex digit (4 bits) to an ASCII char               ;
+                      00056 ;    Params.:   W -> hex digit                                                 ;
+                      00057 ;    Returns:   W -> ASCII char                                                ;
+                      00058 ;    Vars:      TMP                                                            ;
+                      00059 ;                                                                              ;
+                      00060 ;    Notes:                                                                    ; 
+                      00061 ;;                                                                            ;;
+                      00062 ;;;                                                                          ;;;
+                      00063 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00064 
+                      00065 
+                      00066 
+0000                  00067 _nibbleHex2ASCII
+                      00068         
+                      00069 
+0000   390F           00070         ANDLW   0x0F                                                    ; Take the low nibble
+                      00071 
+0001   3E30           00072         ADDLW   '0'
+0002   00??           00073         MOVWF   TMP
+                      00074         
+0003   3C39           00075         SUBLW   '9'
+0004   1803           00076         BTFSC   STATUS, C
+0005   2???           00077         GOTO    _nibbleHex2ASCII_exit
+                      00078 
+0006   3007           00079         MOVLW   'A'-'9'-.1
+0007   07??           00080         ADDWF   TMP, F
+                      00081 
+0008                  00082 _nibbleHex2ASCII_exit
+                      00083 
+0008   08??           00084         MOVFW   TMP
+0009   0008           00085         RETURN
+                      00086 
+                      00087 
+                      00088 
+                      00089 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00090 ;;;                                                                          ;;;
+                      00091 ;;                                                                            ;;
+                      00092 ;    Function:  _ASCII2byteHex                                                 ;
+                      00093 ;    Desc.:     Transform two hex digit represented in ASCII to byte           ;
+                      00094 ;    Params.:   W -> low nibble hex digit in ASCII                             ;
+                      00095 ;               PARAM1 -> high nibble                                          ;
+                      00096 ;    Returns:   W ->                                                           ;
+                      00097 ;    Vars:      TMP2                                                            ;
+                      00098 ;                                                                              ;
+                      00099 ;    Notes:                                                                    ; 
+                      00100 ;;                                                                            ;;
+                      00101 ;;;                                                                          ;;;
+                      00102 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MPASM  5.40            RFID_EMULATOR_MISC.ASM   5-1-2012  1:23:27         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00103 
+                      00104 
+                      00105 
+000A                  00106 _ASCII2byteHex
+                      00107         
+                      00108         
+000A   2???           00109         CALL    _ASCII2nibbleHex
+000B   00??           00110         MOVWF   TMP2
+                      00111         
+000C   08??           00112         MOVFW   PARAM1
+000D   2???           00113         CALL    _ASCII2nibbleHex
+                      00114         
+000E   0E??           00115         SWAPF   TMP2, F
+000F   04??           00116         IORWF   TMP2, F
+0010   0E??           00117         SWAPF   TMP2, W
+                      00118 
+0011   0008           00119         RETURN  
+                      00120 
+                      00121 
+                      00122 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00123 ;;;                                                                          ;;;
+                      00124 ;;                                                                            ;;
+                      00125 ;    Function:  _ASCII2nibbleHex                                               ;
+                      00126 ;    Desc.:     Transform an hex digit represented in ASCII to a nibble        ;
+                      00127 ;    Params.:   W -> hex digit in ASCII                                        ;
+                      00128 ;    Returns:   W ->                                                           ;
+                      00129 ;    Vars:      TMP                                                            ;
+                      00130 ;                                                                              ;
+                      00131 ;    Notes:                                                                    ; 
+                      00132 ;;                                                                            ;;
+                      00133 ;;;                                                                          ;;;
+                      00134 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00135 
+                      00136 
+                      00137 
+0012                  00138 _ASCII2nibbleHex
+                      00139         
+                      00140         
+                      00141 
+0012   00??           00142         MOVWF   TMP                                                             ; Backup
+                      00143 
+0013   3030           00144         MOVLW   '0' 
+0014   02??           00145         SUBWF   TMP, F
+0015   08??           00146         MOVFW   TMP                                                     
+                      00147         
+0016   3C09           00148         SUBLW   .9                                                              ; Check if W<=9
+0017   1C03           00149         BTFSS   STATUS, C
+0018   2???           00150         GOTO    $+3
+                      00151 
+                      00152         ; W<9
+0019   08??           00153         MOVFW   TMP
+001A   0008           00154         RETURN
+                      00155         
+MPASM  5.40            RFID_EMULATOR_MISC.ASM   5-1-2012  1:23:27         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+001B   3011           00156         MOVLW   'A'-'0'
+001C   02??           00157         SUBWF   TMP, F
+001D   08??           00158         MOVFW   TMP
+                      00159 
+001E   3C05           00160         SUBLW   .5                                                              ; Check if W<=5 (0x0A to
+                             0x0F)
+001F   1C03           00161         BTFSS   STATUS, C
+0020   3400           00162         RETLW   0
+                      00163 
+0021   08??           00164         MOVFW   TMP
+0022   3E0A           00165         ADDLW   .10
+0023   0008           00166         RETURN
+                      00167         
+                      00168 
+                      00169 
+                      00170 
+                      00171 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00172 ;;;                                                                          ;;;
+                      00173 ;;                                                                            ;;
+                      00174 ;    Function:  _pauseX10uS                                                    ;
+                      00175 ;    Desc.:     Wait W*10uS + 5 uS                                             ;
+                      00176 ;    Params.:   W -> delay in 10uS                                             ;
+                      00177 ;    Vars:      TMP                                                            ;
+                      00178 ;                                                                              ;
+                      00179 ;    Notes:                                                                    ; 
+                      00180 ;;                                                                            ;;
+                      00181 ;;;                                                                          ;;;
+                      00182 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00183 
+0024                  00184 _pauseX10uS
+                      00185 
+0024   00??           00186         MOVWF TMP
+                      00187         
+0025   2???           00188         GOTO    $+1
+0026   2???           00189         GOTO    $+1
+0027   2???           00190         GOTO    $+1     
+0028   0000           00191         NOP
+0029   0B??           00192         DECFSZ  TMP, F
+002A   2???           00193         GOTO    $-5     
+                      00194 
+002B   0008           00195         RETURN
+                      00196 
+                      00197 
+                      00198 
+                      00199 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00200 ;;;                                                                          ;;;
+                      00201 ;;                                                                            ;;
+                      00202 ;    Function:  _pauseX1mS                                                     ;
+                      00203 ;    Desc.:     Wait W*10uS + 5 uS                                             ;
+                      00204 ;    Params.:   W -> delay in 10uS                                             ;
+                      00205 ;    Vars:      TMP, TMP2                                                      ;
+                      00206 ;                                                                              ;
+                      00207 ;    Notes:                                                                    ; 
+MPASM  5.40            RFID_EMULATOR_MISC.ASM   5-1-2012  1:23:27         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00208 ;;                                                                            ;;
+                      00209 ;;;                                                                          ;;;
+                      00210 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00211 
+002C                  00212 _pauseX1mS
+                      00213 
+                      00214 
+002C   00??           00215         MOVWF   TMP2
+                      00216 
+002D   3064           00217         MOVLW   .100
+002E   00??           00218         MOVWF   TMP
+                      00219         
+002F   2???           00220         GOTO    $+1
+0030   2???           00221         GOTO    $+1
+0031   2???           00222         GOTO    $+1     
+0032   0000           00223         NOP
+0033   0B??           00224         DECFSZ  TMP, F
+0034   2???           00225         GOTO    $-5
+                      00226 
+0035   0B??           00227         DECFSZ  TMP2, F
+0036   2???           00228         GOTO    $-9
+                      00229 
+0037   0008           00230         RETURN
+                      00231 
+                      00232 
+                      00233 
+                      00234 
+                      00235 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00236 ;;;                                                                          ;;;
+                      00237 ;;                                                                            ;;
+                      00238 ;    Function:  _readEEPROM                                                    ;
+                      00239 ;    Desc.:     Read the EEPROM                                               ;
+                      00240 ;    Params.:   W -> EEPROM address to read                                    ;
+                      00241 ;    Return:    W -> readed value                                              ;
+                      00242 ;    Vars:      TMP, TMP2                                                      ;
+                      00243 ;                                                                              ;
+                      00244 ;    Notes: This function doesn't affect the STATUS register                   ; 
+                      00245 ;;                                                                            ;;
+                      00246 ;;;                                                                          ;;;
+                      00247 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00248 
+0038                  00249 _readEEPROM 
+                      00250 
+                      00251         ; Store de W register (EEPROM Address) into TMP
+0038   00??           00252         MOVWF   TMP
+                      00253 
+                      00254         ; Store the STATUS register into TMP2
+0039   0803           00255         MOVFW   STATUS  
+003A   00??           00256         MOVWF   TMP2
+                      00257 
+                      00258         ; Select the EEPROM ADDRESS
+003B   08??           00259         MOVFW   TMP
+003C   1683           00260         BANKSEL EEADR
+MPASM  5.40            RFID_EMULATOR_MISC.ASM   5-1-2012  1:23:27         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+003D   009B           00261         MOVWF   EEADR
+                      00262 
+                      00263         ; Reading...
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+003E   141C           00264         BSF             EECON1, RD
+                      00265         
+                      00266         ; Store the readed data in TMP
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+003F   081A           00267         MOVFW   EEDATA
+0040   ????           00268         BANKSEL TMP
+0041   00??           00269         MOVWF   TMP
+                      00270 
+                      00271         ; Restore the STATUS register 
+0042   08??           00272         MOVFW   TMP2
+0043   0083           00273         MOVWF   STATUS
+                      00274 
+                      00275         ; Store the readed value into W
+0044   08??           00276         MOVFW   TMP
+                      00277 
+0045   0008           00278         RETURN
+                      00279 
+                      00280 
+                      00281 
+                      00282 
+                      00283 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00284 ;;;                                                                          ;;;
+                      00285 ;;                                                                            ;;
+                      00286 ;    Function:  _writeEEPROM                                                   ;
+                      00287 ;    Desc.:     Write the EEPROM                                              ;
+                      00288 ;    Params.:   W -> Data to write                                             ;
+                      00289 ;               PARAM1 -> EEPROM address to write                              ;
+                      00290 ;    Vars:      TMP, TMP2                                                      ;
+                      00291 ;                                                                              ;
+                      00292 ;    Notes: This function doesn't affect the STATUS register                   ; 
+                      00293 ;;                                                                            ;;
+                      00294 ;;;                                                                          ;;;
+                      00295 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00296 
+0046                  00297 _writeEEPROM
+                      00298 
+                      00299         ; Store the W register (DATA) into TMP 
+0046   00??           00300         MOVWF   TMP
+                      00301 
+                      00302         ; Store the STATUS register into TMP2
+0047   0803           00303         MOVFW   STATUS  
+0048   00??           00304         MOVWF   TMP2
+                      00305 
+                      00306         ; Recover the data and load it into the EEDATA register
+0049   08??           00307         MOVFW   TMP
+004A   1683           00308         BANKSEL EEDATA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+004B   009A           00309         MOVWF   EEDATA
+MPASM  5.40            RFID_EMULATOR_MISC.ASM   5-1-2012  1:23:27         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00310 
+                      00311         ; Recover the EEPROM Address and load it into EEADR
+004C   ????           00312         BANKSEL PARAM1
+004D   08??           00313         MOVFW   PARAM1
+004E   1683           00314         BANKSEL EEADR
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+004F   009B           00315         MOVWF   EEADR
+                      00316 
+                      00317 
+                      00318         ; Start the write
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0050   151C           00319         BSF             EECON1,WREN 
+0051   3055           00320         MOVLW   0x55 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0052   009D           00321         MOVWF   EECON2 
+0053   30AA           00322         MOVLW   0xAA 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0054   009D           00323         MOVWF   EECON2 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0055   149C           00324         BSF             EECON1,WR 
+                      00325 
+                      00326         ; Wait until the data is written
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0056   189C           00327         BTFSC   EECON1, WR
+0057   2???           00328         GOTO    $-1
+                      00329 
+                      00330         
+0058   ????           00331         BANKSEL TMP2
+                      00332 
+                      00333         ; Recover the STATUS register
+0059   08??           00334         MOVFW   TMP2
+005A   0083           00335         MOVWF   STATUS
+                      00336 
+                      00337 
+005B   0008           00338         RETURN
+                      00339 
+                      00340         
+                      00341         END
+MPASM  5.40            RFID_EMULATOR_MISC.ASM   5-1-2012  1:23:27         PAGE  9
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ADCON0                            0000001F
+ADCS0                             00000004
+ADCS1                             00000005
+ADCS2                             00000006
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADON                              00000000
+ADRESH                            0000001E
+ADRESL                            0000009E
+ANS0                              00000000
+ANS1                              00000001
+ANS2                              00000002
+ANS3                              00000003
+ANSEL                             0000009F
+C                                 00000000
+CCP1CON                           00000015
+CCP1IE                            00000005
+CCP1IF                            00000005
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCPR1                             00000013
+CCPR1H                            00000014
+CCPR1L                            00000013
+CHS0                              00000002
+CHS1                              00000003
+CHS2                              00000004
+CINV                              00000004
+CIS                               00000003
+CM0                               00000000
+CM1                               00000001
+CM2                               00000002
+CMCON0                            00000019
+CMCON1                            0000001A
+CMIE                              00000003
+CMIF                              00000003
+CMSYNC                            00000000
+COUT                              00000006
+DC                                00000001
+DC1B0                             00000004
+DC1B1                             00000005
+EEADR                             0000009B
+EECON1                            0000009C
+EECON2                            0000009D
+EEDAT                             0000009A
+EEDATA                            0000009A
+EEIE                              00000007
+EEIF                              00000007
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+MPASM  5.40            RFID_EMULATOR_MISC.ASM   5-1-2012  1:23:27         PAGE 10
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+GO                                00000001
+GO_DONE                           00000001
+GO_NOT_DONE                       00000001
+GP0                               00000000
+GP1                               00000001
+GP2                               00000002
+GP3                               00000003
+GP4                               00000004
+GP5                               00000005
+GPIE                              00000003
+GPIF                              00000000
+GPIO                              00000005
+HTS                               00000002
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IOC                               00000096
+IOC0                              00000000
+IOC1                              00000001
+IOC2                              00000002
+IOC3                              00000003
+IOC4                              00000004
+IOC5                              00000005
+IOCA                              00000096
+IOCA0                             00000000
+IOCA1                             00000001
+IOCA2                             00000002
+IOCA3                             00000003
+IOCA4                             00000004
+IOCA5                             00000005
+IRCF0                             00000004
+IRCF1                             00000005
+IRCF2                             00000006
+IRP                               00000007
+LTS                               00000001
+MISC_INC                          
+NOT_BOD                           00000000
+NOT_DONE                          00000001
+NOT_GPPU                          00000007
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+OPTION_REG                        00000081
+OSCCON                            0000008F
+OSCTUNE                           00000090
+OSFIE                             00000002
+OSFIF                             00000002
+OSTS                              00000003
+PARAM1                            00000000
+PCL                               00000002
+MPASM  5.40            RFID_EMULATOR_MISC.ASM   5-1-2012  1:23:27         PAGE 11
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PCLATH                            0000000A
+PCON                              0000008E
+PEIE                              00000006
+PIE1                              0000008C
+PIR1                              0000000C
+PR2                               00000092
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+SBODEN                            00000004
+SCS                               00000000
+STATUS                            00000003
+SWDTEN                            00000000
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1GE                              00000006
+T1GINV                            00000007
+T1GSS                             00000001
+T1IE                              00000000
+T1IF                              00000000
+T1OSCEN                           00000003
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+T2IE                              00000001
+T2IF                              00000001
+TMP                               00000000
+TMP2                              00000001
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR1CS                            00000001
+TMR1GE                            00000006
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+MPASM  5.40            RFID_EMULATOR_MISC.ASM   5-1-2012  1:23:27         PAGE 12
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISIO                            00000085
+TRISIO0                           00000000
+TRISIO1                           00000001
+TRISIO2                           00000002
+TRISIO3                           00000003
+TRISIO4                           00000004
+TRISIO5                           00000005
+TUN0                              00000000
+TUN1                              00000001
+TUN2                              00000002
+TUN3                              00000003
+TUN4                              00000004
+ULPWUE                            00000005
+VCFG                              00000006
+VR0                               00000000
+VR1                               00000001
+VR2                               00000002
+VR3                               00000003
+VRCON                             00000099
+VREN                              00000007
+VRR                               00000005
+W                                 00000000
+WDTCON                            00000018
+WDTPS0                            00000001
+WDTPS1                            00000002
+WDTPS2                            00000003
+WDTPS3                            00000004
+WPU                               00000095
+WPU0                              00000000
+WPU1                              00000001
+WPU2                              00000002
+WPU4                              00000004
+WPU5                              00000005
+WPUA                              00000095
+WPUA0                             00000000
+WPUA1                             00000001
+WPUA2                             00000002
+WPUA4                             00000004
+WPUA5                             00000005
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_.code_0018                       00000018
+_.code_0025                       00000025
+_.code_0026                       00000026
+_.code_0027                       00000027
+_.code_002A                       0000002A
+_.code_002F                       0000002F
+_.code_0030                       00000030
+_.code_0031                       00000031
+MPASM  5.40            RFID_EMULATOR_MISC.ASM   5-1-2012  1:23:27         PAGE 13
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_.code_0034                       00000034
+_.code_0036                       00000036
+_.code_0057                       00000057
+_ASCII2byteHex                    0000000A
+_ASCII2nibbleHex                  00000012
+_BOD_NSLEEP                       00003EFF
+_BOD_OFF                          00003CFF
+_BOD_ON                           00003FFF
+_BOD_SBODEN                       00003DFF
+_CONFIG                           00002007
+_CPD_OFF                          00003FFF
+_CPD_ON                           00003F7F
+_CP_OFF                           00003FFF
+_CP_ON                            00003FBF
+_DEVID1                           00002006
+_EC_OSC                           00003FFB
+_EXTRC                            00003FFF
+_EXTRCIO                          00003FFE
+_EXTRC_OSC_CLKOUT                 00003FFF
+_EXTRC_OSC_NOCLKOUT               00003FFE
+_FCMEN_OFF                        000037FF
+_FCMEN_ON                         00003FFF
+_HS_OSC                           00003FFA
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_IESO_OFF                         00003BFF
+_IESO_ON                          00003FFF
+_INTOSC                           00003FFD
+_INTOSCIO                         00003FFC
+_INTRC_OSC_CLKOUT                 00003FFD
+_INTRC_OSC_NOCLKOUT               00003FFC
+_LP_OSC                           00003FF8
+_MCLRE_OFF                        00003FDF
+_MCLRE_ON                         00003FFF
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FEF
+_WDT_OFF                          00003FF7
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FF9
+__12F683                          00000001
+__DEBUG                           1
+_nibbleHex2ASCII                  00000000
+_nibbleHex2ASCII_exit             00000008
+_pauseX10uS                       00000024
+_pauseX1mS                        0000002C
+_readEEPROM                       00000038
+_writeEEPROM                      00000046
+
+MPASM  5.40            RFID_EMULATOR_MISC.ASM   5-1-2012  1:23:27         PAGE 14
+
+
+
+
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :    11 reported,     0 suppressed
+
+

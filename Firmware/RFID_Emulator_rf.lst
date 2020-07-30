@@ -1,0 +1,832 @@
+MPASM  5.40              RFID_EMULATOR_RF.ASM   5-1-2012  1:23:24         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00002  ;;                                                                          ;;
+                      00003 ;;                                                                            ;;
+                      00004 ;                   RFID Emulator - RF LIBRARY                                 ;
+                      00005 ;;                                                                            ;;
+                      00006  ;;                                                                          ;;
+                      00007   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00008 
+                      00009 
+                      00010 
+                      00011 
+                      00012 
+                      00013 
+                      00014         #INCLUDE "p12f683.inc"
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ;  MPASM PIC12F683 processor include
+                      00005 ; 
+                      00006 ;  (c) Copyright 1999-2011 Microchip Technology, All rights reserved
+                      00007 ;==========================================================================
+                      00008 
+                      00443         LIST
+                      00015         #INCLUDE "RFID_Emulator_rf.inc"
+                      00001   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00002  ;;                                                                          ;;
+                      00003 ;;                                                                            ;;
+                      00004 ;                     RFID Emulator - RF LIBRARY                               ;
+                      00005 ;;                                                                            ;;
+                      00006  ;;                                                                          ;;
+                      00007   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00008 
+                      00009 
+                      00010 
+                      00011         #include "p12f683.inc"
+                      00444         LIST
+                      00445 
+                      00446 ;==========================================================================
+                      00447 ;  MPASM PIC12F683 processor include
+                      00448 ; 
+                      00449 ;  (c) Copyright 1999-2011 Microchip Technology, All rights reserved
+                      00450 ;==========================================================================
+                      00451 
+Message[310]: Superseding current maximum RAM and RAM map.
+                      00886         LIST
+                      00012 
+                      00013         #IFNDEF RF_INC
+                      00014         
+                      00015         #DEFINE RF_INC
+                      00016 
+                      00017 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00018 ;;;                                                                          ;;;
+                      00019 ;;                                                                 DEFINITIONS                          
+MPASM  5.40              RFID_EMULATOR_RF.ASM   5-1-2012  1:23:24         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                                  ;;
+                      00020 ;;;                                                                          ;;;
+                      00021 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00022 
+                      00023         ;#DEFINE DEBUG 1                                ; Debugging flag
+                      00024 
+                      00025         ; Coil IO
+                      00026         #DEFINE COIL1           GPIO, GP4
+                      00027         #DEFINE COIL1_TRIS      TRISIO,GP4
+                      00028         #DEFINE COIL1_MASK_TRISIO b'00010000'   
+                      00029         #DEFINE COIL2           GPIO, GP5
+                      00030         #DEFINE COIL2_TRIS      TRISIO,GP5
+                      00031         #DEFINE DEMODULATOR     GPIO, GP1
+                      00032         #DEFINE DEMODULATOR_TRIS TRISIO, GP1
+                      00033         
+                      00034 
+                      00035         ; Flags bits
+                      00036         #DEFINE FLAG_OUTPUT_READY 0
+                      00037 
+                      00038 
+                      00039 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00040 ;;;                                                                          ;;;
+                      00041 ;;                                                                  MACROS                              
+                                  ;;
+                      00042 ;;;                                                                          ;;;
+                      00043 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00044 
+                      00045 
+                      00046 WAIT_RF_IS_READY MACRO
+                      00047 
+                      00048         ; Wait for the next Timer1 interruption to transmit
+                      00049         BTFSS   RF_FLAGS, FLAG_OUTPUT_READY
+                      00050         GOTO    $-1
+                      00051         
+                      00052         BCF             RF_FLAGS, FLAG_OUTPUT_READY     ; Clean the flag
+                      00053 
+                      00054         ENDM
+                      00055 
+                      00056 
+                      00057 RF_0 MACRO
+                      00058 ;BCF    GPIO,GP0 ;TEST
+                      00059         BANKSEL TRISIO
+                      00060         BSF             COIL1_TRIS                      ; Coil to High Impedance
+                      00061         BANKSEL GPIO
+                      00062         
+                      00063         ENDM
+                      00064 
+                      00065 
+                      00066 RF_1 MACRO
+                      00067 ;BSF    GPIO,GP0 ;TEST
+                      00068         BANKSEL TRISIO
+                      00069         BCF             COIL1_TRIS                      ; Coil to GND
+                      00070         BANKSEL GPIO
+MPASM  5.40              RFID_EMULATOR_RF.ASM   5-1-2012  1:23:24         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00071         
+                      00072         ENDM
+                      00073 
+                      00074 
+                      00075 RF_TOGGLE MACRO
+                      00076 
+                      00077         BANKSEL TRISIO
+                      00078         MOVLW   COIL1_MASK_TRISIO
+                      00079         XORWF   TRISIO, F
+                      00080         BANKSEL GPIO
+                      00081 
+                      00082         ENDM
+                      00083 
+                      00084 
+                      00085         #ENDIF
+                      00016 
+                      00017 
+  0000                00018         GLOBAL  _initRF, _ISRTimer1RF
+  0000                00019         GLOBAL  _txManchester1, _txManchester0, _txBiphase1, _txBiphase0
+                      00020 
+                      00021 
+                      00022 
+                      00023 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00024 ;;;                                                                          ;;;
+                      00025 ;;                                VARIABLES                                   ;;
+                      00026 ;;;                                                                          ;;;
+                      00027 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00028 
+                      00029 
+                      00030 
+                      00031         UDATA
+                      00032 
+0000                  00033 RF_FLAGS        RES 1
+0001                  00034 TMP_CLOCKS_PER_BIT      RES 1
+                      00035 
+                      00036 
+                      00037 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00038 ;;;                                                                          ;;;
+                      00039 ;;                                  CODE                                      ;;
+                      00040 ;;;                                                                          ;;;
+                      00041 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00042 
+                      00043         CODE
+                      00044 
+                      00045 
+                      00046 
+                      00047 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00048 ;;;                                                                          ;;;
+                      00049 ;;                                                                            ;;
+                      00050 ;    Function:  _initRF                                                        ;
+                      00051 ;    Desc.:     Initialize the RF                                              ;
+                      00052 ;    Params.:   W -> CARRIER CLOCKS PER BIT                                    ;
+                      00053 ;    Vars:      TMP                                                            ;
+MPASM  5.40              RFID_EMULATOR_RF.ASM   5-1-2012  1:23:24         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00054 ;                                                                              ;
+                      00055 ;    Notes:     The TMR1 interruption is activated.                            ; 
+                      00056 ;;                                                                            ;;
+                      00057 ;;;                                                                          ;;;
+                      00058 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00059 
+0000                  00060 _initRF
+                      00061 
+                      00062 
+0000   00??           00063         MOVWF   TMP_CLOCKS_PER_BIT      ; Backup of the CLOCK_PER_BIT value stored in W
+                      00064 
+0001   1683           00065         BANKSEL PIE1                            ; Bank 1
+                      00066 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0002   1605           00067         BSF             COIL1_TRIS                      ; Coil pins as input
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0003   1685           00068         BSF             COIL2_TRIS                      
+                      00069 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0004   018C           00070         CLRF    PIE1                            ; Activate the Timer1 Interruption
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0005   140C           00071         BSF             PIE1, TMR1IE                            
+                      00072 
+0006   1283           00073         BANKSEL PIR1                            ; Bank 0
+                      00074 
+0007   1205           00075         BCF             COIL1                           ; COIL1 connected to GND (if COIL1_TRIS = 0)    
+                      00076 
+0008   100C           00077         BCF     PIR1, TMR1IF                    ; Clear the TMR1IF flag
+0009   30C0           00078         MOVLW   b'11000000'                     ; Activate GIE and PEIE
+000A   008B           00079         MOVWF   INTCON
+                      00080         
+                      00081         
+000B   30FF           00082         MOVLW   0xFF                            ; Write the Timer1 upper byte
+000C   008F           00083         MOVWF   TMR1H
+                      00084 
+                      00085         ; Write the Timer1 lower byte. TMR1L = 0 - CLOCKS_PER_BIT/2
+000D   1003           00086         BCF             STATUS, C                                       
+000E   0C??           00087         RRF             TMP_CLOCKS_PER_BIT, W           ; CLOCKS_PER_BIT / 2 -> W
+000F   3EFE           00088         ADDLW   -2                                                      ; Tuning. 
+0010   018E           00089         CLRF    TMR1L                                           ; TMR1L = 0
+0011   028E           00090         SUBWF   TMR1L, F
+                      00091 
+                      00092         IFDEF   DEBUG
+                      00093         MOVLW   b'00110001'                                     ; Timer1: internal clock source, synchro
+                            nous, prescalerx8.
+                      00094         ELSE
+0012   3007           00095         MOVLW   b'00000111'                                     ; Timer1: external clock source, synchro
+                            nous, no prescaler.
+                      00096         ENDIF
+0013   0090           00097         MOVWF   T1CON                                           ; Timer1 config
+                      00098 
+                      00099 
+0014   01??           00100         CLRF    RF_FLAGS                                        ; Clear the RF flags
+MPASM  5.40              RFID_EMULATOR_RF.ASM   5-1-2012  1:23:24         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00101 
+                      00102 
+0015   0008           00103         RETURN
+                      00104 
+                      00105 
+                      00106 
+                      00107 
+                      00108 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00109 ;;;                                                                          ;;;
+                      00110 ;;                                                                            ;;
+                      00111 ;    Function:  _ISRTimer1RF                                                   ;
+                      00112 ;    Desc.:     Timer1 Interruption Service Routine                            ;
+                      00113 ;    Vars:                                                                     ;
+                      00114 ;                                                                              ;
+                      00115 ;    Notes:                                                                    ; 
+                      00116 ;;                                                                            ;;
+                      00117 ;;;                                                                          ;;;
+                      00118 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00119 
+0016                  00120 _ISRTimer1RF
+                      00121 
+0016   100C           00122         BCF             PIR1, TMR1IF                    ; Cleart the TMR1F flag
+                      00123 
+0017   1683           00124         BANKSEL PIE1                                    ; Bank 1
+                      00125 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0018   1C0C           00126         BTFSS   PIE1, TMR1IE                    ; Check for ghost interrupts
+0019   0008           00127         RETURN                                                  ; WARNING! Return with the Bank 1 select
+                            ed
+                      00128 
+001A   1283           00129         BANKSEL TMR1H                                   ; Bank 0        
+                      00130         
+                      00131 
+                      00132 
+                      00133 
+001B   30FF           00134         MOVLW   0xFF                            ; Write the Timer1 upper byte
+001C   008F           00135         MOVWF   TMR1H
+                      00136 
+                      00137         ; Write the Timer1 lower byte. TMR1L = 0 - CLOCKS_PER_BIT/2
+001D   1003           00138         BCF             STATUS, C                                       
+001E   0C??           00139         RRF             TMP_CLOCKS_PER_BIT, W           ; CLOCKS_PER_BIT / 2 -> W
+001F   3EFE           00140         ADDLW   -2                                                      ; Tuning.
+0020   018E           00141         CLRF    TMR1L                                           ; TMR1L = 0
+0021   028E           00142         SUBWF   TMR1L, F
+                      00143 
+                      00144         
+0022   1400           00145         BSF             RF_FLAGS, FLAG_OUTPUT_READY
+                      00146         
+0023   0008           00147         RETURN
+                      00148 
+                      00149 
+                      00150 
+                      00151 
+MPASM  5.40              RFID_EMULATOR_RF.ASM   5-1-2012  1:23:24         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00152 
+                      00153 
+                      00154 
+                      00155 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00156 ;;;                                                                          ;;;
+                      00157 ;;                                                                            ;;
+                      00158 ;    Function:  _txManchester1                                                 ;
+                      00159 ;    Desc.:     Transmit a Manchester encoded 1 bit                            ;
+                      00160 ;    Vars:                                                                     ;
+                      00161 ;                                                                              ;
+                      00162 ;    Notes:                                                                    ; 
+                      00163 ;;                                                                            ;;
+                      00164 ;;;                                                                          ;;;
+                      00165 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00166 
+0024                  00167 _txManchester1
+                      00168 
+                      00169         WAIT_RF_IS_READY
+                          M 
+                          M         ; Wait for the next Timer1 interruption to transmit
+0024   1C00               M         BTFSS   RF_FLAGS, FLAG_OUTPUT_READY
+0025   2???               M         GOTO    $-1
+                          M         
+0026   1000               M         BCF             RF_FLAGS, FLAG_OUTPUT_READY     ; Clean the flag
+                          M 
+                      00170         RF_0
+                          M ;BCF    GPIO,GP0 ;TEST
+0027   1683               M         BANKSEL TRISIO
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0028   1605               M         BSF             COIL1_TRIS                      ; Coil to High Impedance
+0029   1283               M         BANKSEL GPIO
+                          M         
+                      00171         
+                      00172 
+                      00173         WAIT_RF_IS_READY
+                          M 
+                          M         ; Wait for the next Timer1 interruption to transmit
+002A   1C00               M         BTFSS   RF_FLAGS, FLAG_OUTPUT_READY
+002B   2???               M         GOTO    $-1
+                          M         
+002C   1000               M         BCF             RF_FLAGS, FLAG_OUTPUT_READY     ; Clean the flag
+                          M 
+                      00174         RF_1
+                          M ;BSF    GPIO,GP0 ;TEST
+002D   1683               M         BANKSEL TRISIO
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+002E   1205               M         BCF             COIL1_TRIS                      ; Coil to GND
+002F   1283               M         BANKSEL GPIO
+                          M         
+                      00175 
+0030   0008           00176         return
+                      00177 
+                      00178 
+MPASM  5.40              RFID_EMULATOR_RF.ASM   5-1-2012  1:23:24         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00179 
+                      00180 
+                      00181 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00182 ;;;                                                                          ;;;
+                      00183 ;;                                                                            ;;
+                      00184 ;    Function:  _txManchester0                                                 ;
+                      00185 ;    Desc.:     Transmit a Manchester encoded 0 bit                            ;
+                      00186 ;    Vars:                                                                     ;
+                      00187 ;                                                                              ;
+                      00188 ;    Notes:                                                                    ;
+                      00189 ;;                                                                            ;;
+                      00190 ;;;                                                                          ;;;
+                      00191 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00192 
+0031                  00193 _txManchester0
+                      00194 
+                      00195         WAIT_RF_IS_READY
+                          M 
+                          M         ; Wait for the next Timer1 interruption to transmit
+0031   1C00               M         BTFSS   RF_FLAGS, FLAG_OUTPUT_READY
+0032   2???               M         GOTO    $-1
+                          M         
+0033   1000               M         BCF             RF_FLAGS, FLAG_OUTPUT_READY     ; Clean the flag
+                          M 
+                      00196         RF_1
+                          M ;BSF    GPIO,GP0 ;TEST
+0034   1683               M         BANKSEL TRISIO
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0035   1205               M         BCF             COIL1_TRIS                      ; Coil to GND
+0036   1283               M         BANKSEL GPIO
+                          M         
+                      00197         
+                      00198 
+                      00199         WAIT_RF_IS_READY
+                          M 
+                          M         ; Wait for the next Timer1 interruption to transmit
+0037   1C00               M         BTFSS   RF_FLAGS, FLAG_OUTPUT_READY
+0038   2???               M         GOTO    $-1
+                          M         
+0039   1000               M         BCF             RF_FLAGS, FLAG_OUTPUT_READY     ; Clean the flag
+                          M 
+                      00200         RF_0
+                          M ;BCF    GPIO,GP0 ;TEST
+003A   1683               M         BANKSEL TRISIO
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+003B   1605               M         BSF             COIL1_TRIS                      ; Coil to High Impedance
+003C   1283               M         BANKSEL GPIO
+                          M         
+                      00201 
+003D   0008           00202         return
+                      00203 
+                      00204 
+                      00205 
+MPASM  5.40              RFID_EMULATOR_RF.ASM   5-1-2012  1:23:24         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00206 
+                      00207 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00208 ;;;                                                                          ;;;
+                      00209 ;;                                                                            ;;
+                      00210 ;    Function:  _txBiphase1                                                    ;
+                      00211 ;    Desc.:     Transmit a Manchester encoded 1 bit                            ;
+                      00212 ;    Vars:                                                                     ;
+                      00213 ;                                                                              ;
+                      00214 ;    Notes:                                                                    ;
+                      00215 ;;                                                                            ;;
+                      00216 ;;;                                                                          ;;;
+                      00217 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00218 
+003E                  00219 _txBiphase1
+                      00220 
+                      00221         WAIT_RF_IS_READY
+                          M 
+                          M         ; Wait for the next Timer1 interruption to transmit
+003E   1C00               M         BTFSS   RF_FLAGS, FLAG_OUTPUT_READY
+003F   2???               M         GOTO    $-1
+                          M         
+0040   1000               M         BCF             RF_FLAGS, FLAG_OUTPUT_READY     ; Clean the flag
+                          M 
+                      00222         RF_TOGGLE
+                          M 
+0041   1683               M         BANKSEL TRISIO
+0042   3010               M         MOVLW   COIL1_MASK_TRISIO
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0043   0685               M         XORWF   TRISIO, F
+0044   1283               M         BANKSEL GPIO
+                          M 
+                      00223 
+                      00224         WAIT_RF_IS_READY
+                          M 
+                          M         ; Wait for the next Timer1 interruption to transmit
+0045   1C00               M         BTFSS   RF_FLAGS, FLAG_OUTPUT_READY
+0046   2???               M         GOTO    $-1
+                          M         
+0047   1000               M         BCF             RF_FLAGS, FLAG_OUTPUT_READY     ; Clean the flag
+                          M 
+                      00225 
+0048   0008           00226         return
+                      00227 
+                      00228 
+                      00229 
+                      00230 
+                      00231 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00232 ;;;                                                                          ;;;
+                      00233 ;;                                                                            ;;
+                      00234 ;    Function:  _txBiphase0                                                    ;
+                      00235 ;    Desc.:     Transmit a Manchester encoded 0 bit                            ;
+                      00236 ;    Vars:                                                                     ;
+                      00237 ;                                                                              ;
+MPASM  5.40              RFID_EMULATOR_RF.ASM   5-1-2012  1:23:24         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00238 ;    Notes:                                                                    ;
+                      00239 ;;                                                                            ;;
+                      00240 ;;;                                                                          ;;;
+                      00241 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00242 
+0049                  00243 _txBiphase0
+                      00244 
+                      00245         WAIT_RF_IS_READY
+                          M 
+                          M         ; Wait for the next Timer1 interruption to transmit
+0049   1C00               M         BTFSS   RF_FLAGS, FLAG_OUTPUT_READY
+004A   2???               M         GOTO    $-1
+                          M         
+004B   1000               M         BCF             RF_FLAGS, FLAG_OUTPUT_READY     ; Clean the flag
+                          M 
+                      00246         RF_TOGGLE
+                          M 
+004C   1683               M         BANKSEL TRISIO
+004D   3010               M         MOVLW   COIL1_MASK_TRISIO
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+004E   0685               M         XORWF   TRISIO, F
+004F   1283               M         BANKSEL GPIO
+                          M 
+                      00247 
+                      00248         WAIT_RF_IS_READY
+                          M 
+                          M         ; Wait for the next Timer1 interruption to transmit
+0050   1C00               M         BTFSS   RF_FLAGS, FLAG_OUTPUT_READY
+0051   2???               M         GOTO    $-1
+                          M         
+0052   1000               M         BCF             RF_FLAGS, FLAG_OUTPUT_READY     ; Clean the flag
+                          M 
+                      00249         RF_TOGGLE
+                          M 
+0053   1683               M         BANKSEL TRISIO
+0054   3010               M         MOVLW   COIL1_MASK_TRISIO
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0055   0685               M         XORWF   TRISIO, F
+0056   1283               M         BANKSEL GPIO
+                          M 
+                      00250 
+0057   0008           00251         return
+                      00252 
+                      00253 
+                      00254         END
+MPASM  5.40              RFID_EMULATOR_RF.ASM   5-1-2012  1:23:24         PAGE 10
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ADCON0                            0000001F
+ADCS0                             00000004
+ADCS1                             00000005
+ADCS2                             00000006
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADON                              00000000
+ADRESH                            0000001E
+ADRESL                            0000009E
+ANS0                              00000000
+ANS1                              00000001
+ANS2                              00000002
+ANS3                              00000003
+ANSEL                             0000009F
+C                                 00000000
+CCP1CON                           00000015
+CCP1IE                            00000005
+CCP1IF                            00000005
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCPR1                             00000013
+CCPR1H                            00000014
+CCPR1L                            00000013
+CHS0                              00000002
+CHS1                              00000003
+CHS2                              00000004
+CINV                              00000004
+CIS                               00000003
+CM0                               00000000
+CM1                               00000001
+CM2                               00000002
+CMCON0                            00000019
+CMCON1                            0000001A
+CMIE                              00000003
+CMIF                              00000003
+CMSYNC                            00000000
+COIL1                             GPIO, GP4
+COIL1_MASK_TRISIO                 b'00010000'
+COIL1_TRIS                        TRISIO,GP4
+COIL2                             GPIO, GP5
+COIL2_TRIS                        TRISIO,GP5
+COUT                              00000006
+DC                                00000001
+DC1B0                             00000004
+DC1B1                             00000005
+DEMODULATOR                       GPIO, GP1
+DEMODULATOR_TRIS                  TRISIO, GP1
+EEADR                             0000009B
+EECON1                            0000009C
+EECON2                            0000009D
+MPASM  5.40              RFID_EMULATOR_RF.ASM   5-1-2012  1:23:24         PAGE 11
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+EEDAT                             0000009A
+EEDATA                            0000009A
+EEIE                              00000007
+EEIF                              00000007
+F                                 00000001
+FLAG_OUTPUT_READY                 0
+FSR                               00000004
+GIE                               00000007
+GO                                00000001
+GO_DONE                           00000001
+GO_NOT_DONE                       00000001
+GP0                               00000000
+GP1                               00000001
+GP2                               00000002
+GP3                               00000003
+GP4                               00000004
+GP5                               00000005
+GPIE                              00000003
+GPIF                              00000000
+GPIO                              00000005
+HTS                               00000002
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IOC                               00000096
+IOC0                              00000000
+IOC1                              00000001
+IOC2                              00000002
+IOC3                              00000003
+IOC4                              00000004
+IOC5                              00000005
+IOCA                              00000096
+IOCA0                             00000000
+IOCA1                             00000001
+IOCA2                             00000002
+IOCA3                             00000003
+IOCA4                             00000004
+IOCA5                             00000005
+IRCF0                             00000004
+IRCF1                             00000005
+IRCF2                             00000006
+IRP                               00000007
+LTS                               00000001
+NOT_BOD                           00000000
+NOT_DONE                          00000001
+NOT_GPPU                          00000007
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+OPTION_REG                        00000081
+MPASM  5.40              RFID_EMULATOR_RF.ASM   5-1-2012  1:23:24         PAGE 12
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+OSCCON                            0000008F
+OSCTUNE                           00000090
+OSFIE                             00000002
+OSFIF                             00000002
+OSTS                              00000003
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PEIE                              00000006
+PIE1                              0000008C
+PIR1                              0000000C
+PR2                               00000092
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RD                                00000000
+RF_0                              
+RF_1                              
+RF_FLAGS                          00000000
+RF_INC                            
+RF_TOGGLE                         
+RP0                               00000005
+RP1                               00000006
+SBODEN                            00000004
+SCS                               00000000
+STATUS                            00000003
+SWDTEN                            00000000
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1GE                              00000006
+T1GINV                            00000007
+T1GSS                             00000001
+T1IE                              00000000
+T1IF                              00000000
+T1OSCEN                           00000003
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+T2IE                              00000001
+T2IF                              00000001
+TMP_CLOCKS_PER_BIT                00000001
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR1CS                            00000001
+TMR1GE                            00000006
+TMR1H                             0000000F
+MPASM  5.40              RFID_EMULATOR_RF.ASM   5-1-2012  1:23:24         PAGE 13
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISIO                            00000085
+TRISIO0                           00000000
+TRISIO1                           00000001
+TRISIO2                           00000002
+TRISIO3                           00000003
+TRISIO4                           00000004
+TRISIO5                           00000005
+TUN0                              00000000
+TUN1                              00000001
+TUN2                              00000002
+TUN3                              00000003
+TUN4                              00000004
+ULPWUE                            00000005
+VCFG                              00000006
+VR0                               00000000
+VR1                               00000001
+VR2                               00000002
+VR3                               00000003
+VRCON                             00000099
+VREN                              00000007
+VRR                               00000005
+W                                 00000000
+WAIT_RF_IS_READY                  
+WDTCON                            00000018
+WDTPS0                            00000001
+WDTPS1                            00000002
+WDTPS2                            00000003
+WDTPS3                            00000004
+WPU                               00000095
+WPU0                              00000000
+WPU1                              00000001
+WPU2                              00000002
+WPU4                              00000004
+WPU5                              00000005
+WPUA                              00000095
+WPUA0                             00000000
+WPUA1                             00000001
+WPUA2                             00000002
+WPUA4                             00000004
+WPUA5                             00000005
+WR                                00000001
+MPASM  5.40              RFID_EMULATOR_RF.ASM   5-1-2012  1:23:24         PAGE 14
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_.code_0025                       00000025
+_.code_002B                       0000002B
+_.code_0032                       00000032
+_.code_0038                       00000038
+_.code_003F                       0000003F
+_.code_0046                       00000046
+_.code_004A                       0000004A
+_.code_0051                       00000051
+_BOD_NSLEEP                       00003EFF
+_BOD_OFF                          00003CFF
+_BOD_ON                           00003FFF
+_BOD_SBODEN                       00003DFF
+_CONFIG                           00002007
+_CPD_OFF                          00003FFF
+_CPD_ON                           00003F7F
+_CP_OFF                           00003FFF
+_CP_ON                            00003FBF
+_DEVID1                           00002006
+_EC_OSC                           00003FFB
+_EXTRC                            00003FFF
+_EXTRCIO                          00003FFE
+_EXTRC_OSC_CLKOUT                 00003FFF
+_EXTRC_OSC_NOCLKOUT               00003FFE
+_FCMEN_OFF                        000037FF
+_FCMEN_ON                         00003FFF
+_HS_OSC                           00003FFA
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_IESO_OFF                         00003BFF
+_IESO_ON                          00003FFF
+_INTOSC                           00003FFD
+_INTOSCIO                         00003FFC
+_INTRC_OSC_CLKOUT                 00003FFD
+_INTRC_OSC_NOCLKOUT               00003FFC
+_ISRTimer1RF                      00000016
+_LP_OSC                           00003FF8
+_MCLRE_OFF                        00003FDF
+_MCLRE_ON                         00003FFF
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FEF
+_WDT_OFF                          00003FF7
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FF9
+__12F683                          00000001
+__DEBUG                           1
+_initRF                           00000000
+_txBiphase0                       00000049
+_txBiphase1                       0000003E
+MPASM  5.40              RFID_EMULATOR_RF.ASM   5-1-2012  1:23:24         PAGE 15
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_txManchester0                    00000031
+_txManchester1                    00000024
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :    13 reported,     0 suppressed
+
+

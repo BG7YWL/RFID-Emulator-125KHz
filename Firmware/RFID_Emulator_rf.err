@@ -1,0 +1,13 @@
+Message[310] C:\PROGRAM FILES\MICROCHIP\MPASM SUITE\P12F683.INC 812 : Superseding current maximum RAM and RAM map.
+Message[302] COMMON\RFID_EMULATOR_RF.ASM 67 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] COMMON\RFID_EMULATOR_RF.ASM 68 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] COMMON\RFID_EMULATOR_RF.ASM 70 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] COMMON\RFID_EMULATOR_RF.ASM 71 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] COMMON\RFID_EMULATOR_RF.ASM 126 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] COMMON\RFID_EMULATOR_RF.INC 60 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] COMMON\RFID_EMULATOR_RF.INC 69 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] COMMON\RFID_EMULATOR_RF.INC 69 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] COMMON\RFID_EMULATOR_RF.INC 60 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] COMMON\RFID_EMULATOR_RF.INC 79 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] COMMON\RFID_EMULATOR_RF.INC 79 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] COMMON\RFID_EMULATOR_RF.INC 79 : Register in operand not in bank 0.  Ensure that bank bits are correct.

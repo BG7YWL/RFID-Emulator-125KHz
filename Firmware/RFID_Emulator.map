@@ -1,0 +1,254 @@
+MPLINK 4.38, Linker
+Linker Map File - Created Tue May 01 01:23:30 2012
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+               RST_VECTOR       code   0x000000    program   0x000002
+                   .cinit    romdata   0x000001    program   0x000004
+               INT_VECTOR       code   0x000004    program   0x000194
+                    .code       code   0x0000ce    program   0x000214
+.config_2007_RFID_EMULATOR.O       code   0x002007    program   0x000002
+                   .org_0       code   0x002100    program   0x00001c
+                   .udata      udata   0x000020       data   0x000029
+               .udata_shr      udata   0x000070       data   0x00000f
+                    TRASH      udata   0x0000a0       data   0x000020
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000002      
+                            0x000004    0x0001d7      
+                            0x002007    0x002007      
+                            0x002100    0x00210d      
+            486 out of 2310 program addresses used, program memory utilization is 21%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+        EE_CLOCKS_PER_BIT   0x002101    program     extern C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+           EE_MEMORY_SIZE   0x002100    program     extern C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+           EE_RFID_MEMORY   0x002103    program     extern C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+              EE_TAG_MODE   0x002102    program     extern C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+              _.code_0018   0x00014b    program     static Common\RFID_Emulator_misc.asm
+              _.code_0025   0x0000f3    program     static Common\RFID_Emulator_rf.asm
+              _.code_0025   0x000158    program     static Common\RFID_Emulator_misc.asm
+              _.code_0026   0x000159    program     static Common\RFID_Emulator_misc.asm
+              _.code_0027   0x00015a    program     static Common\RFID_Emulator_misc.asm
+              _.code_002A   0x00015d    program     static Common\RFID_Emulator_misc.asm
+              _.code_002B   0x0000f9    program     static Common\RFID_Emulator_rf.asm
+              _.code_002F   0x000162    program     static Common\RFID_Emulator_misc.asm
+              _.code_0030   0x000163    program     static Common\RFID_Emulator_misc.asm
+              _.code_0031   0x000164    program     static Common\RFID_Emulator_misc.asm
+              _.code_0032   0x000100    program     static Common\RFID_Emulator_rf.asm
+              _.code_0034   0x000167    program     static Common\RFID_Emulator_misc.asm
+              _.code_0036   0x000169    program     static Common\RFID_Emulator_misc.asm
+              _.code_0038   0x000106    program     static Common\RFID_Emulator_rf.asm
+              _.code_003F   0x00010d    program     static Common\RFID_Emulator_rf.asm
+              _.code_0046   0x000114    program     static Common\RFID_Emulator_rf.asm
+              _.code_004A   0x000118    program     static Common\RFID_Emulator_rf.asm
+              _.code_0051   0x00011f    program     static Common\RFID_Emulator_rf.asm
+              _.code_0057   0x00018a    program     static Common\RFID_Emulator_misc.asm
+           _ASCII2byteHex   0x00013d    program     extern Common\RFID_Emulator_misc.asm
+         _ASCII2nibbleHex   0x000145    program     extern Common\RFID_Emulator_misc.asm
+         _INT_VECTOR_0023   0x000023    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+         _INT_VECTOR_0025   0x000025    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+         _INT_VECTOR_002A   0x00002a    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+         _INT_VECTOR_002F   0x00002f    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+         _INT_VECTOR_0034   0x000034    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+         _INT_VECTOR_0078   0x000078    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+             _ISRTimer1RF   0x0000e4    program     extern Common\RFID_Emulator_rf.asm
+          _ISRTimer1RF_RX   0x0000ba    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                _ISR_PLAY   0x00000d    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                _ISR_exit   0x00000f    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                 _bitloop   0x0001a8    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                _byteloop   0x0001a1    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                    _cero   0x0000ca    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+       _comprobarCabecera   0x00002e    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+_demodular_paquete_manchester   0x000083    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+_demodular_paquete_manchester_0   0x000090    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+_demodular_paquete_manchester_1   0x00008d    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+      _esperando_bit_base   0x000043    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+       _grabar_RFID_BUCLE   0x00006b    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                  _initIO   0x000126    program     extern Common\RFID_Emulator_io.asm
+                  _initRF   0x0000ce    program     extern Common\RFID_Emulator_rf.asm
+               _initRF_RX   0x000093    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+              _loadConfig   0x0001bd    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+           _loadMemoryMap   0x0001c9    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+      _loadMemoryMap_loop   0x0001ce    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                    _main   0x00001d    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                    _main   0x000194    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+         _nibbleHex2ASCII   0x000133    program     extern Common\RFID_Emulator_misc.asm
+    _nibbleHex2ASCII_exit   0x00013b    program     static Common\RFID_Emulator_misc.asm
+              _pauseX10uS   0x000157    program     extern Common\RFID_Emulator_misc.asm
+               _pauseX1mS   0x00015f    program     extern Common\RFID_Emulator_misc.asm
+      _procesando_paquete   0x000046    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+         _procesarBitBase   0x00007a    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+ _procesar_bit_Manchester   0x000046    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+              _readEEPROM   0x00016b    program     extern Common\RFID_Emulator_misc.asm
+           _salvarPaquete   0x000055    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                   _start   0x000015    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                 _startRX   0x0000a2    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+              _start_PLAY   0x00018f    program     extern C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                  _stopRX   0x0000b3    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                    _test   0x00003a    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                     _tx0   0x0001b8    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                     _tx1   0x0001b3    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+              _txBiphase0   0x000117    program     extern Common\RFID_Emulator_rf.asm
+              _txBiphase1   0x00010c    program     extern Common\RFID_Emulator_rf.asm
+           _txManchester0   0x0000ff    program     extern Common\RFID_Emulator_rf.asm
+           _txManchester1   0x0000f2    program     extern Common\RFID_Emulator_rf.asm
+                     _uno   0x0000cc    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+             _writeEEPROM   0x000179    program     extern Common\RFID_Emulator_misc.asm
+              grabar_RFID   0x000067    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+              BIT_COUNTER   0x000044       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+             BYTE_COUNTER   0x000043       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+    CONFIG_CLOCKS_PER_BIT   0x000041       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+    CONFIG_CLOCKS_PER_BIT   0x00007d       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+       CONFIG_MEMORY_SIZE   0x000040       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+          CONFIG_TAG_MODE   0x00003f       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+    CONTADOR_BITS_PAQUETE   0x000076       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+         CONTADOR_NIBBLES   0x000078       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+         EEPROM_DIRECCION   0x000074       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                    FLAGS   0x000070       data     extern C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                   FLAGS2   0x00007c       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                  PAQUETE   0x000077       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+       PAQUETE_MANCHESTER   0x000075       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                   PARAM1   0x00007e       data     extern Common\RFID_Emulator_misc.asm
+                  PARIDAD   0x00007a       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+          PARIDAD_COLUMNA   0x00007b       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+              RFID_MEMORY   0x00002f       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+              RFID_MEMORY   0x000020       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                 RF_FLAGS   0x00002b       data     static Common\RFID_Emulator_rf.asm
+              STATUS_TEMP   0x000073       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+              STATUS_TEMP   0x000046       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                      TMP   0x00002d       data     static Common\RFID_Emulator_misc.asm
+                      TMP   0x000071       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                      TMP   0x000048       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                     TMP2   0x00002e       data     static Common\RFID_Emulator_misc.asm
+                     TMP2   0x000079       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+       TMP_CLOCKS_PER_BIT   0x00002c       data     static Common\RFID_Emulator_rf.asm
+              TMP_COUNTER   0x000042       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                    TRASH   0x0000a0       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                  TX_BYTE   0x000047       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                   W_TEMP   0x000072       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                   W_TEMP   0x000045       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                _ISR_PLAY   0x00000d    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                _ISR_exit   0x00000f    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                   _start   0x000015    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                    _main   0x00001d    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+         _INT_VECTOR_0023   0x000023    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+         _INT_VECTOR_0025   0x000025    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+         _INT_VECTOR_002A   0x00002a    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+       _comprobarCabecera   0x00002e    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+         _INT_VECTOR_002F   0x00002f    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+         _INT_VECTOR_0034   0x000034    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                    _test   0x00003a    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+      _esperando_bit_base   0x000043    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+ _procesar_bit_Manchester   0x000046    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+      _procesando_paquete   0x000046    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+           _salvarPaquete   0x000055    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+              grabar_RFID   0x000067    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+       _grabar_RFID_BUCLE   0x00006b    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+         _INT_VECTOR_0078   0x000078    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+         _procesarBitBase   0x00007a    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+_demodular_paquete_manchester   0x000083    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+_demodular_paquete_manchester_1   0x00008d    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+_demodular_paquete_manchester_0   0x000090    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+               _initRF_RX   0x000093    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                 _startRX   0x0000a2    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                  _stopRX   0x0000b3    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+          _ISRTimer1RF_RX   0x0000ba    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                    _cero   0x0000ca    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                     _uno   0x0000cc    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                  _initRF   0x0000ce    program     extern Common\RFID_Emulator_rf.asm
+             _ISRTimer1RF   0x0000e4    program     extern Common\RFID_Emulator_rf.asm
+           _txManchester1   0x0000f2    program     extern Common\RFID_Emulator_rf.asm
+              _.code_0025   0x0000f3    program     static Common\RFID_Emulator_rf.asm
+              _.code_002B   0x0000f9    program     static Common\RFID_Emulator_rf.asm
+           _txManchester0   0x0000ff    program     extern Common\RFID_Emulator_rf.asm
+              _.code_0032   0x000100    program     static Common\RFID_Emulator_rf.asm
+              _.code_0038   0x000106    program     static Common\RFID_Emulator_rf.asm
+              _txBiphase1   0x00010c    program     extern Common\RFID_Emulator_rf.asm
+              _.code_003F   0x00010d    program     static Common\RFID_Emulator_rf.asm
+              _.code_0046   0x000114    program     static Common\RFID_Emulator_rf.asm
+              _txBiphase0   0x000117    program     extern Common\RFID_Emulator_rf.asm
+              _.code_004A   0x000118    program     static Common\RFID_Emulator_rf.asm
+              _.code_0051   0x00011f    program     static Common\RFID_Emulator_rf.asm
+                  _initIO   0x000126    program     extern Common\RFID_Emulator_io.asm
+         _nibbleHex2ASCII   0x000133    program     extern Common\RFID_Emulator_misc.asm
+    _nibbleHex2ASCII_exit   0x00013b    program     static Common\RFID_Emulator_misc.asm
+           _ASCII2byteHex   0x00013d    program     extern Common\RFID_Emulator_misc.asm
+         _ASCII2nibbleHex   0x000145    program     extern Common\RFID_Emulator_misc.asm
+              _.code_0018   0x00014b    program     static Common\RFID_Emulator_misc.asm
+              _pauseX10uS   0x000157    program     extern Common\RFID_Emulator_misc.asm
+              _.code_0025   0x000158    program     static Common\RFID_Emulator_misc.asm
+              _.code_0026   0x000159    program     static Common\RFID_Emulator_misc.asm
+              _.code_0027   0x00015a    program     static Common\RFID_Emulator_misc.asm
+              _.code_002A   0x00015d    program     static Common\RFID_Emulator_misc.asm
+               _pauseX1mS   0x00015f    program     extern Common\RFID_Emulator_misc.asm
+              _.code_002F   0x000162    program     static Common\RFID_Emulator_misc.asm
+              _.code_0030   0x000163    program     static Common\RFID_Emulator_misc.asm
+              _.code_0031   0x000164    program     static Common\RFID_Emulator_misc.asm
+              _.code_0034   0x000167    program     static Common\RFID_Emulator_misc.asm
+              _.code_0036   0x000169    program     static Common\RFID_Emulator_misc.asm
+              _readEEPROM   0x00016b    program     extern Common\RFID_Emulator_misc.asm
+             _writeEEPROM   0x000179    program     extern Common\RFID_Emulator_misc.asm
+              _.code_0057   0x00018a    program     static Common\RFID_Emulator_misc.asm
+              _start_PLAY   0x00018f    program     extern C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                    _main   0x000194    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                _byteloop   0x0001a1    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                 _bitloop   0x0001a8    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                     _tx1   0x0001b3    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                     _tx0   0x0001b8    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+              _loadConfig   0x0001bd    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+           _loadMemoryMap   0x0001c9    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+      _loadMemoryMap_loop   0x0001ce    program     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+           EE_MEMORY_SIZE   0x002100    program     extern C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+        EE_CLOCKS_PER_BIT   0x002101    program     extern C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+              EE_TAG_MODE   0x002102    program     extern C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+           EE_RFID_MEMORY   0x002103    program     extern C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+              RFID_MEMORY   0x000020       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                 RF_FLAGS   0x00002b       data     static Common\RFID_Emulator_rf.asm
+       TMP_CLOCKS_PER_BIT   0x00002c       data     static Common\RFID_Emulator_rf.asm
+                      TMP   0x00002d       data     static Common\RFID_Emulator_misc.asm
+                     TMP2   0x00002e       data     static Common\RFID_Emulator_misc.asm
+              RFID_MEMORY   0x00002f       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+          CONFIG_TAG_MODE   0x00003f       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+       CONFIG_MEMORY_SIZE   0x000040       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+    CONFIG_CLOCKS_PER_BIT   0x000041       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+              TMP_COUNTER   0x000042       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+             BYTE_COUNTER   0x000043       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+              BIT_COUNTER   0x000044       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                   W_TEMP   0x000045       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+              STATUS_TEMP   0x000046       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                  TX_BYTE   0x000047       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                      TMP   0x000048       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator_multimap.asm
+                    FLAGS   0x000070       data     extern C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                      TMP   0x000071       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                   W_TEMP   0x000072       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+              STATUS_TEMP   0x000073       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+         EEPROM_DIRECCION   0x000074       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+       PAQUETE_MANCHESTER   0x000075       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+    CONTADOR_BITS_PAQUETE   0x000076       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                  PAQUETE   0x000077       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+         CONTADOR_NIBBLES   0x000078       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                     TMP2   0x000079       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                  PARIDAD   0x00007a       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+          PARIDAD_COLUMNA   0x00007b       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                   FLAGS2   0x00007c       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+    CONFIG_CLOCKS_PER_BIT   0x00007d       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+                   PARAM1   0x00007e       data     extern Common\RFID_Emulator_misc.asm
+                    TRASH   0x0000a0       data     static C:\RFID_Emulator_Source\RFID_Emulator\RFID_Emulator.asm
+
+

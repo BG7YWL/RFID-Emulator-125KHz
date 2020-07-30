@@ -1,0 +1,576 @@
+MPASM  5.40              RFID_EMULATOR_IO.ASM   5-1-2012  1:23:25         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00002  ;;                                                                          ;;
+                      00003 ;;                                                                            ;;
+                      00004 ;                     RFID Emulator - IO LIBRARY                               ;
+                      00005 ;;                                                                            ;;
+                      00006  ;;                                                                          ;;
+                      00007   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00008 
+                      00009 
+                      00010 
+                      00011         #include "p12f683.inc"
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ;  MPASM PIC12F683 processor include
+                      00005 ; 
+                      00006 ;  (c) Copyright 1999-2011 Microchip Technology, All rights reserved
+                      00007 ;==========================================================================
+                      00008 
+                      00443         LIST
+                      00012         #include "RFID_Emulator_io.inc"
+                      00001   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00002  ;;                                                                          ;;
+                      00003 ;;                                                                            ;;
+                      00004 ;                     RFID Emulator - IO LIBRARY                               ;
+                      00005 ;;                                                                            ;;
+                      00006  ;;                                                                          ;;
+                      00007   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00008 
+                      00009 
+                      00010 
+                      00011         #include "p12f683.inc"
+                      00444         LIST
+                      00445 
+                      00446 ;==========================================================================
+                      00447 ;  MPASM PIC12F683 processor include
+                      00448 ; 
+                      00449 ;  (c) Copyright 1999-2011 Microchip Technology, All rights reserved
+                      00450 ;==========================================================================
+                      00451 
+Message[310]: Superseding current maximum RAM and RAM map.
+                      00886         LIST
+                      00012 
+                      00013         #IFNDEF IO_INC
+                      00014         
+                      00015         #DEFINE IO_INC
+                      00016 
+                      00017 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00018 ;;;                                                                          ;;;
+                      00019 ;;                                                                 DEFINITIONS                          
+                                  ;;
+                      00020 ;;;                                                                          ;;;
+                      00021 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MPASM  5.40              RFID_EMULATOR_IO.ASM   5-1-2012  1:23:25         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00022 
+                      00023 
+                      00024         #DEFINE LED1            GPIO,   GP0
+                      00025         #DEFINE LED1_TRIS       TRISIO, GP0
+                      00026         #DEFINE LED1_MASK       b'00000001'
+                      00027         #DEFINE LED2            GPIO,   GP1
+                      00028         #DEFINE LED2_TRIS       TRISIO, GP1
+                      00029         #DEFINE LED2_MASK       b'00000010'
+                      00030 
+                      00031         #DEFINE BUTTON1         GPIO,   GP2
+                      00032         #DEFINE BUTTON1_TRIS TRISIO,GP2
+                      00033         #DEFINE BUTTON1_MASK b'00000100'
+                      00034         #DEFINE BUTTON2         GPIO,   GP3
+                      00035         #DEFINE BUTTON2_TRIS TRISIO,GP3
+                      00036         #DEFINE BUTTON2_MASK b'00001000'
+                      00037 
+                      00038 
+                      00039 
+                      00040 
+                      00041 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00042 ;;;                                                                          ;;;
+                      00043 ;;                                                                  MACROS                              
+                                  ;;
+                      00044 ;;;                                                                          ;;;
+                      00045 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00046 
+                      00047 
+                      00048         #DEFINE LED1_ON         BSF     LED1
+                      00049         #DEFINE LED1_OFF        BCF     LED1
+                      00050 
+                      00051         #DEFINE LED2_ON         BSF     LED2
+                      00052         #DEFINE LED2_OFF        BCF     LED2
+                      00053 
+                      00054 LED1_TOGGLE MACRO
+                      00055         MOVLW   LED1_MASK
+                      00056         XORWF   GPIO
+                      00057         ENDM
+                      00058 
+                      00059 LED2_TOGGLE MACRO
+                      00060         MOVLW   LED2_MASK
+                      00061         XORWF   GPIO
+                      00062         ENDM
+                      00063 
+                      00064 
+                      00065 BUTTON1_WAIT_UNTIL_PRESSED      MACRO
+                      00066         BTFSC   BUTTON1                                 
+                      00067         GOTO    $-1
+                      00068         ENDM
+                      00069 
+                      00070 BUTTON1_WAIT_UNTIL_NOT_PRESSED  MACRO
+                      00071         BTFSS   BUTTON1                                 
+                      00072         GOTO    $-1
+                      00073         ENDM
+MPASM  5.40              RFID_EMULATOR_IO.ASM   5-1-2012  1:23:25         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00074 
+                      00075 
+                      00076 BUTTON2_WAIT_UNTIL_PRESSED      MACRO
+                      00077         BTFSC   BUTTON2
+                      00078         GOTO    $-1
+                      00079         ENDM
+                      00080 
+                      00081 BUTTON2_WAIT_UNTIL_NOT_PRESSED  MACRO
+                      00082         BTFSS   BUTTON2
+                      00083         GOTO    $-1
+                      00084         ENDM
+                      00085 
+                      00086 
+                      00087 BUTTON1_CALL_IF_PRESSED MACRO ADDRESS
+                      00088         BTFSS   BUTTON1
+                      00089         CALL    ADDRESS
+                      00090         ENDM
+                      00091 
+                      00092 BUTTON1_CALL_IF_NOT_PRESSED MACRO ADDRESS
+                      00093         BTFSC   BUTTON1
+                      00094         CALL    ADDRESS
+                      00095         ENDM
+                      00096 
+                      00097 BUTTON1_GOTO_IF_PRESSED MACRO ADDRESS
+                      00098         BTFSS   BUTTON1
+                      00099         GOTO    ADDRESS
+                      00100         ENDM
+                      00101 
+                      00102 BUTTON1_GOTO_IF_NOT_PRESSED MACRO ADDRESS
+                      00103         BTFSC   BUTTON1
+                      00104         GOTO    ADDRESS
+                      00105         ENDM
+                      00106 
+                      00107 
+                      00108 BUTTON2_CALL_IF_PRESSED MACRO ADDRESS
+                      00109         BTFSS   BUTTON2
+                      00110         CALL    ADDRESS
+                      00111         ENDM
+                      00112 
+                      00113 BUTTON2_CALL_IF_NOT_PRESSED MACRO ADDRESS
+                      00114         BTFSC   BUTTON2
+                      00115         CALL    ADDRESS
+                      00116         ENDM
+                      00117 
+                      00118 BUTTON2_GOTO_IF_PRESSED MACRO ADDRESS
+                      00119         BTFSS   BUTTON2
+                      00120         GOTO    ADDRESS
+                      00121         ENDM
+                      00122 
+                      00123 BUTTON2_GOTO_IF_NOT_PRESSED MACRO ADDRESS
+                      00124         BTFSC   BUTTON2
+                      00125         GOTO    ADDRESS
+                      00126         ENDM
+MPASM  5.40              RFID_EMULATOR_IO.ASM   5-1-2012  1:23:25         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00127 
+                      00128 
+                      00129         #ENDIF
+                      00013 
+  0000                00014         GLOBAL  _initIO
+                      00015 
+                      00016 
+                      00017 
+                      00018 
+                      00019 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00020 ;;;                                                                          ;;;
+                      00021 ;;                                VARIABLES                                   ;;
+                      00022 ;;;                                                                          ;;;
+                      00023 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00024 
+                      00025 
+                      00026         
+                      00027         
+                      00028 
+                      00029 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00030 ;;;                                                                          ;;;
+                      00031 ;;                                  CODE                                      ;;
+                      00032 ;;;                                                                          ;;;
+                      00033 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00034 
+                      00035         CODE
+                      00036 
+                      00037 
+                      00038 
+                      00039 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00040 ;;;                                                                          ;;;
+                      00041 ;;                                                                            ;;
+                      00042 ;    Function:  _initIO                                                        ;
+                      00043 ;    Desc.:     Initialize the Input/Output devices (LEDS & BUTTONS)          ;
+                      00044 ;    Params.:   NONE                                                           ;
+                      00045 ;                                                                              ;
+                      00046 ;    Notes:     Returns in Bank 0                                              ; 
+                      00047 ;;                                                                            ;;
+                      00048 ;;;                                                                          ;;;
+                      00049 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00050 
+0000                  00051 _initIO
+                      00052 
+0000   1683           00053         BANKSEL TRISIO
+                      00054 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0001   1005           00055         BCF             LED1_TRIS                                       ; LEDs as output
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0002   1085           00056         BCF             LED2_TRIS
+                      00057 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0003   1505           00058         BSF             BUTTON1_TRIS                            ; Buttons as input
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+MPASM  5.40              RFID_EMULATOR_IO.ASM   5-1-2012  1:23:25         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0004   1585           00059         BSF             BUTTON2_TRIS
+                      00060         
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0005   019F           00061         CLRF    ANSEL                                           ; GPIO as digital IOs
+                      00062 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0006   1381           00063         BCF             OPTION_REG, NOT_GPPU            ; PULL-UPs activated on GPIO
+                      00064 
+0007   1283           00065         BANKSEL GPIO
+                      00066 
+                      00067 
+0008   3007           00068         MOVLW   07h                                             ; Disable the analog comparators
+0009   0099           00069         MOVWF   CMCON0
+                      00070 
+000A   1005           00071         BCF             LED1                                            ; LEDS off
+000B   1085           00072         BCF             LED2
+                      00073         
+000C   0008           00074         return
+                      00075 
+                      00076 
+                      00077 
+                      00078         END
+MPASM  5.40              RFID_EMULATOR_IO.ASM   5-1-2012  1:23:25         PAGE  6
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ADCON0                            0000001F
+ADCS0                             00000004
+ADCS1                             00000005
+ADCS2                             00000006
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADON                              00000000
+ADRESH                            0000001E
+ADRESL                            0000009E
+ANS0                              00000000
+ANS1                              00000001
+ANS2                              00000002
+ANS3                              00000003
+ANSEL                             0000009F
+BUTTON1                           GPIO,   GP2
+BUTTON1_CALL_IF_NOT_PRESSED       
+BUTTON1_CALL_IF_PRESSED           
+BUTTON1_GOTO_IF_NOT_PRESSED       
+BUTTON1_GOTO_IF_PRESSED           
+BUTTON1_MASK                      b'00000100'
+BUTTON1_TRIS                      TRISIO,GP2
+BUTTON1_WAIT_UNTIL_NOT_PRESSED    
+BUTTON1_WAIT_UNTIL_PRESSED        
+BUTTON2                           GPIO,   GP3
+BUTTON2_CALL_IF_NOT_PRESSED       
+BUTTON2_CALL_IF_PRESSED           
+BUTTON2_GOTO_IF_NOT_PRESSED       
+BUTTON2_GOTO_IF_PRESSED           
+BUTTON2_MASK                      b'00001000'
+BUTTON2_TRIS                      TRISIO,GP3
+BUTTON2_WAIT_UNTIL_NOT_PRESSED    
+BUTTON2_WAIT_UNTIL_PRESSED        
+C                                 00000000
+CCP1CON                           00000015
+CCP1IE                            00000005
+CCP1IF                            00000005
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCPR1                             00000013
+CCPR1H                            00000014
+CCPR1L                            00000013
+CHS0                              00000002
+CHS1                              00000003
+CHS2                              00000004
+CINV                              00000004
+CIS                               00000003
+CM0                               00000000
+CM1                               00000001
+CM2                               00000002
+CMCON0                            00000019
+MPASM  5.40              RFID_EMULATOR_IO.ASM   5-1-2012  1:23:25         PAGE  7
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+CMCON1                            0000001A
+CMIE                              00000003
+CMIF                              00000003
+CMSYNC                            00000000
+COUT                              00000006
+DC                                00000001
+DC1B0                             00000004
+DC1B1                             00000005
+EEADR                             0000009B
+EECON1                            0000009C
+EECON2                            0000009D
+EEDAT                             0000009A
+EEDATA                            0000009A
+EEIE                              00000007
+EEIF                              00000007
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+GO                                00000001
+GO_DONE                           00000001
+GO_NOT_DONE                       00000001
+GP0                               00000000
+GP1                               00000001
+GP2                               00000002
+GP3                               00000003
+GP4                               00000004
+GP5                               00000005
+GPIE                              00000003
+GPIF                              00000000
+GPIO                              00000005
+HTS                               00000002
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IOC                               00000096
+IOC0                              00000000
+IOC1                              00000001
+IOC2                              00000002
+IOC3                              00000003
+IOC4                              00000004
+IOC5                              00000005
+IOCA                              00000096
+IOCA0                             00000000
+IOCA1                             00000001
+IOCA2                             00000002
+IOCA3                             00000003
+IOCA4                             00000004
+IOCA5                             00000005
+IO_INC                            
+IRCF0                             00000004
+IRCF1                             00000005
+MPASM  5.40              RFID_EMULATOR_IO.ASM   5-1-2012  1:23:25         PAGE  8
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+IRCF2                             00000006
+IRP                               00000007
+LED1                              GPIO,   GP0
+LED1_MASK                         b'00000001'
+LED1_OFF                          BCF     LED1
+LED1_ON                           BSF     LED1
+LED1_TOGGLE                       
+LED1_TRIS                         TRISIO, GP0
+LED2                              GPIO,   GP1
+LED2_MASK                         b'00000010'
+LED2_OFF                          BCF     LED2
+LED2_ON                           BSF     LED2
+LED2_TOGGLE                       
+LED2_TRIS                         TRISIO, GP1
+LTS                               00000001
+NOT_BOD                           00000000
+NOT_DONE                          00000001
+NOT_GPPU                          00000007
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+OPTION_REG                        00000081
+OSCCON                            0000008F
+OSCTUNE                           00000090
+OSFIE                             00000002
+OSFIF                             00000002
+OSTS                              00000003
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PEIE                              00000006
+PIE1                              0000008C
+PIR1                              0000000C
+PR2                               00000092
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+SBODEN                            00000004
+SCS                               00000000
+STATUS                            00000003
+SWDTEN                            00000000
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+MPASM  5.40              RFID_EMULATOR_IO.ASM   5-1-2012  1:23:25         PAGE  9
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+T1GE                              00000006
+T1GINV                            00000007
+T1GSS                             00000001
+T1IE                              00000000
+T1IF                              00000000
+T1OSCEN                           00000003
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+T2IE                              00000001
+T2IF                              00000001
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR1CS                            00000001
+TMR1GE                            00000006
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISIO                            00000085
+TRISIO0                           00000000
+TRISIO1                           00000001
+TRISIO2                           00000002
+TRISIO3                           00000003
+TRISIO4                           00000004
+TRISIO5                           00000005
+TUN0                              00000000
+TUN1                              00000001
+TUN2                              00000002
+TUN3                              00000003
+TUN4                              00000004
+ULPWUE                            00000005
+VCFG                              00000006
+VR0                               00000000
+VR1                               00000001
+VR2                               00000002
+VR3                               00000003
+VRCON                             00000099
+VREN                              00000007
+VRR                               00000005
+W                                 00000000
+WDTCON                            00000018
+WDTPS0                            00000001
+MPASM  5.40              RFID_EMULATOR_IO.ASM   5-1-2012  1:23:25         PAGE 10
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+WDTPS1                            00000002
+WDTPS2                            00000003
+WDTPS3                            00000004
+WPU                               00000095
+WPU0                              00000000
+WPU1                              00000001
+WPU2                              00000002
+WPU4                              00000004
+WPU5                              00000005
+WPUA                              00000095
+WPUA0                             00000000
+WPUA1                             00000001
+WPUA2                             00000002
+WPUA4                             00000004
+WPUA5                             00000005
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_BOD_NSLEEP                       00003EFF
+_BOD_OFF                          00003CFF
+_BOD_ON                           00003FFF
+_BOD_SBODEN                       00003DFF
+_CONFIG                           00002007
+_CPD_OFF                          00003FFF
+_CPD_ON                           00003F7F
+_CP_OFF                           00003FFF
+_CP_ON                            00003FBF
+_DEVID1                           00002006
+_EC_OSC                           00003FFB
+_EXTRC                            00003FFF
+_EXTRCIO                          00003FFE
+_EXTRC_OSC_CLKOUT                 00003FFF
+_EXTRC_OSC_NOCLKOUT               00003FFE
+_FCMEN_OFF                        000037FF
+_FCMEN_ON                         00003FFF
+_HS_OSC                           00003FFA
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_IESO_OFF                         00003BFF
+_IESO_ON                          00003FFF
+_INTOSC                           00003FFD
+_INTOSCIO                         00003FFC
+_INTRC_OSC_CLKOUT                 00003FFD
+_INTRC_OSC_NOCLKOUT               00003FFC
+_LP_OSC                           00003FF8
+_MCLRE_OFF                        00003FDF
+_MCLRE_ON                         00003FFF
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FEF
+_WDT_OFF                          00003FF7
+MPASM  5.40              RFID_EMULATOR_IO.ASM   5-1-2012  1:23:25         PAGE 11
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FF9
+__12F683                          00000001
+__DEBUG                           1
+_initIO                           00000000
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     7 reported,     0 suppressed
+
+

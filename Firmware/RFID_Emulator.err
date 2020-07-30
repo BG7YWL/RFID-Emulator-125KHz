@@ -1,0 +1,17 @@
+Message[310] C:\PROGRAM FILES\MICROCHIP\MPASM SUITE\P12F683.INC 812 : Superseding current maximum RAM and RAM map.
+Message[310] C:\PROGRAM FILES\MICROCHIP\MPASM SUITE\P12F683.INC 1255 : Superseding current maximum RAM and RAM map.
+Message[310] C:\PROGRAM FILES\MICROCHIP\MPASM SUITE\P12F683.INC 1698 : Superseding current maximum RAM and RAM map.
+Message[312] C:\RFID_EMULATOR_SOURCE\RFID_EMULATOR\RFID_EMULATOR.ASM 286 : Page or Bank selection not needed for this device.  No code generated.
+Message[312] C:\RFID_EMULATOR_SOURCE\RFID_EMULATOR\RFID_EMULATOR.ASM 331 : Page or Bank selection not needed for this device.  No code generated.
+Message[302] C:\RFID_EMULATOR_SOURCE\RFID_EMULATOR\RFID_EMULATOR.ASM 469 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\RFID_EMULATOR_SOURCE\RFID_EMULATOR\RFID_EMULATOR.ASM 474 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\RFID_EMULATOR_SOURCE\RFID_EMULATOR\RFID_EMULATOR.ASM 476 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\RFID_EMULATOR_SOURCE\RFID_EMULATOR\RFID_EMULATOR.ASM 479 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\RFID_EMULATOR_SOURCE\RFID_EMULATOR\RFID_EMULATOR.ASM 480 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Warning[203] C:\RFID_EMULATOR_SOURCE\RFID_EMULATOR\RFID_EMULATOR.ASM 482 : Found opcode in column 1. (BCF)
+Message[302] C:\RFID_EMULATOR_SOURCE\RFID_EMULATOR\RFID_EMULATOR.ASM 482 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\RFID_EMULATOR_SOURCE\RFID_EMULATOR\RFID_EMULATOR.ASM 498 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\RFID_EMULATOR_SOURCE\RFID_EMULATOR\RFID_EMULATOR.ASM 499 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\RFID_EMULATOR_SOURCE\RFID_EMULATOR\RFID_EMULATOR.ASM 534 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\RFID_EMULATOR_SOURCE\RFID_EMULATOR\RFID_EMULATOR.ASM 555 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Warning[205] C:\RFID_EMULATOR_SOURCE\RFID_EMULATOR\RFID_EMULATOR.ASM 598 : Found directive in column 1. (ORG)
